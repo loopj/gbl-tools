@@ -1,0 +1,12 @@
+{
+  "name": "gbl-tools",
+  "description": "Tools for parsing and uploading Gecko Bootloader images",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "gbl-parser": "./bin/gbl-parser.js"
+  },
+  "exports": {
+    ".": "./src/index.js"
+  }
+}
