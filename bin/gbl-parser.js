@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { readFile } from 'node:fs/promises';
-import { GBL_APPLICATION_TYPE, GBL_TYPE, GeckoBootloaderImage } from 'gecko-bootloader';
+import { GBL_APPLICATION_TYPE, GBL_TYPE, GeckoBootloaderImage } from 'gbl-tools';
 
 // Data printing helper functions
 function intToHex(n, c = 8) {
