@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/package",
   "name": "gbl-tools",
   "description": "Tools for parsing and uploading Gecko Bootloader images",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "bin": {
     "gbl-parser": "./bin/gbl-parser.js"
