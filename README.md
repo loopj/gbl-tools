@@ -9,6 +9,30 @@ This library provides tools for working with the Gecko Bootloader, including par
 - Web Bluetooth client for the Gecko Bootloader BLE OTA protocol.
 - Easy-to-use CLI for quick GBL image analysis.
 
+## Demo
+
+Check out the [live demo](https://loopj.com/gbl-tools/) of the Gecko Bootloader OTA upload client.
+
+## Installation
+
+### Browser
+
+To use the library in a browser environment, you can import the module directly from the ESM CDN:
+
+```html
+<script type="module">
+  import { GeckoBootloaderClient } from 'https://esm.sh/gbl-tools';
+</script>
+```
+
+### Node.js
+
+To install the package in a Node.js environment, you can use npm:
+
+```bash
+npm install gbl-tools
+```
+
 ## Parsing Gecko Bootloader (GBL) Images
 
 ### Browser
