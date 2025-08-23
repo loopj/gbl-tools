@@ -33,10 +33,15 @@ if (process.argv.length < 3) {
 
 // Read a GBL file into a buffer
 let buffer;
+const filePath = process.argv[2];
 try {
-  buffer = await readFile(process.argv[2]);
+  buffer = await readFile(filePath);
 } catch (error) {
-  console.error(`Error reading file ${process.argv[2]}:`, error);
+  if (error.code === 'ENOENT') {
+    console.error(`${filePath}: No such file or directory`);
+  } else {
+    console.error(`Error reading file ${filePath}:`, error.message || error);
+  }
   process.exit(1);
 }
 
@@ -102,5 +107,13 @@ if (image.signature) {
   console.log('Signature:');
   console.log(`  r:                   0x${bytesToHex(image.signature.r)}`);
   console.log(`  s:                   0x${bytesToHex(image.signature.s)}`);
+  console.log();
+}
+
+if (image.seUpgrade) {
+  console.log('Secure Element Upgrade:');
+  console.log(`  Blob Size:           ${image.seUpgrade.blobSize} bytes`);
+  console.log(`  Version:             0x${intToHex(image.seUpgrade.version)}`);
+  console.log(`  Data:                ${image.seUpgrade.data.length} bytes`);
   console.log();
 }
