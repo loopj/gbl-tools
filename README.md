@@ -59,7 +59,7 @@ console.log(`Application version: ${appVersion}`);
 ### CLI
 
 ```bash
-npx gbl-tools gbl-parser
+npx gbl-tools somefile.gbl
 ```
 
 ## Flashing firmware using the Gecko Bootloader BLE OTA protocol
