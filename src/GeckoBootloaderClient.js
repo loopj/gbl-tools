@@ -209,10 +209,10 @@ export class GeckoBootloaderClient {
   }
 
   /**
-   * Get the application version bytes.
-   * @returns {Promise<number>} The application version bytes.
+   * Get the application version.
+   * @returns {Promise<number>} The application version.
    */
   async getApplicationVersion() {
-    return await this.#applicationVersionChar.readValue();
+    return (await this.#applicationVersionChar.readValue()).getUint32(0, true);
   }
 }

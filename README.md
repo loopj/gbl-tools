@@ -147,18 +147,15 @@ cancelButton.addEventListener('click', () => {
 ### Fetching Current Firmware Version
 
 ```js
-// Grab the application version bytes
-const versionBytes = await client.getApplicationVersion();
+// Grab the application version
+const version = await client.getApplicationVersion();
+console.log(`Current firmware version: ${version}`);
 
-// If using a simple integer versioning scheme
-const versionNum = versionBytes.getUint32(0, true);
-console.log(`Current firmware version: ${versionNum}`);
-
-// ...or if using semantic versioning
+// If using semantic versioning
 const semver = {
-  major: versionBytes.getUint8(3),
-  minor: versionBytes.getUint8(2),
-  patch: versionBytes.getUint8(1),
-  build: versionBytes.getUint8(0)
+  major: (version >> 24) & 0xff,
+  minor: (version >> 16) & 0xff,
+  patch: (version >> 8) & 0xff,
+  build: version & 0xff,
 };
 ```
