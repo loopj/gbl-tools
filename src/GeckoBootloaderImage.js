@@ -58,6 +58,7 @@ export const GBL_APPLICATION_TYPE = {
 export class GeckoBootloaderImage {
   #buffer;
   #dataView;
+  #eof;
 
   /**
    * GBL header tag type.
@@ -231,7 +232,7 @@ export class GeckoBootloaderImage {
       } else if (tagType === GBL_TAG_ID_BOOTLOADER) {
         this.bootloader = this.#parseBootloaderTag(offset, tagLength);
       } else if (tagType === GBL_TAG_ID_APPLICATION) {
-        this.application = this.#parseApplicationInfoTag(offset, tagLength);
+        this.application = this.#parseApplicationTag(offset, tagLength);
       } else if (tagType === GBL_TAG_ID_METADATA) {
         this.metadata.push(this.#parseMetadataTag(offset, tagLength));
       } else if (tagType === GBL_TAG_ID_PROG) {
@@ -257,9 +258,14 @@ export class GeckoBootloaderImage {
       } else if (tagType === GBL_TAG_ID_CERTIFICATE) {
         this.certificate = this.#parseCertificateTag(offset, tagLength);
       }
-
       offset += tagLength;
+
+      // Break if we have read the end tag
+      if (this.crc32) break;
     }
+
+    // Save the EOF position
+    this.#eof = offset;
   }
 
   /**
@@ -267,7 +273,7 @@ export class GeckoBootloaderImage {
    * @returns {number} The CRC32 checksum.
    */
   calculateCRC32() {
-    const buf = new Uint8Array(this.#buffer, 0, this.#buffer.byteLength - 4);
+    const buf = new Uint8Array(this.#buffer, 0, this.#eof - 4);
     let crc = 0xffffffff;
 
     for (let i = 0; i < buf.length; i++) {
@@ -312,8 +318,8 @@ export class GeckoBootloaderImage {
     };
   }
 
-  #parseApplicationInfoTag(offset, length) {
-    if (length !== 28) throw new Error('Invalid application info tag length');
+  #parseApplicationTag(offset, length) {
+    if (length !== 28) throw new Error('Invalid application tag length');
 
     return {
       type: this.#dataView.getUint32(offset, true),
