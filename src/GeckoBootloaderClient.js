@@ -77,7 +77,7 @@ export class GeckoBootloaderClient {
     ]);
 
     // Set up characteristics
-    const service = await this.#device.gatt.getPrimaryService(OTA_SERVICE_UUID);
+    const service = await this.#device.gatt.getPrimaryService(GBL_OTA_SERVICE_UUID);
     this.#otaControlChar = await service.getCharacteristic(OTA_CONTROL_UUID);
     this.#otaDataChar = await service.getCharacteristic(OTA_DATA_UUID);
     this.#appLoaderVersionChar = await service.getCharacteristic(APPLOADER_VERSION_UUID);
