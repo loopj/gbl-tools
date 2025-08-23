@@ -1,0 +1,139 @@
+<!-- Demo application for Gecko Bootloader Web Bluetooth OTA -->
+<html>
+
+<head>
+  <title>Gecko Bootloader Web Bluetooth OTA</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #logs {
+      white-space: pre-wrap;
+      font-family: monospace;
+      height: 300px;
+      background: #f0f0f0;
+      overflow: auto;
+      padding: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Gecko Bootloader Web Bluetooth OTA</h1>
+
+  <div id="connect">
+    <h2>Step 1: Connect to Device</h2>
+    <p>Enter bootloader mode on your device, then click the connect button.</p>
+    <button id="connect-button">Connect</button>
+  </div>
+
+  <div id="select-file" class="hidden">
+    <h2>Step 2: Select Firmware File</h2>
+    <p>Select a .gbl firmware file to upload.</p>
+    <input type="file" id="file-input" accept=".gbl">
+  </div>
+
+  <div id="upload" class="hidden">
+    <h2>Step 3: Upload Firmware</h2>
+    <p>Click the upload button to start uploading the firmware.</p>
+    <button id="upload-button">Upload</button>
+  </div>
+
+  <div id="reboot" class="hidden">
+    <h2>Step 4: Reboot Device</h2>
+    <p>Click the reboot button to reboot the device into the new firmware.</p>
+    <button id="reboot-button">Reboot</button>
+  </div>
+
+  <h2>Logs</h2>
+  <div id="logs"></div>
+
+  <script type="module">
+    import { GBL_OTA_SERVICE_UUID, GeckoBootloaderClient } from 'https://esm.sh/gbl-tools';
+
+    let client;
+    const steps = ['connect', 'select-file', 'upload', 'reboot'];
+
+    function log(message) {
+      const logs = document.getElementById('logs');
+      logs.textContent += message + '\n';
+      logs.scrollTop = logs.scrollHeight;
+    }
+
+    function showStep(stepId) {
+      steps.forEach((id) => {
+        document.getElementById(id).classList.toggle('hidden', id !== stepId);
+      });
+    }
+
+    async function connectButtonClicked() {
+      log('Prompting user to select a Bluetooth device...');
+
+      const device = await navigator.bluetooth.requestDevice({
+        acceptAllDevices: true,
+        optionalServices: [GBL_OTA_SERVICE_UUID]
+      });
+
+      log(`Connecting to device '${device.name}'...`);
+
+      try {
+        client = new GeckoBootloaderClient(device);
+        await client.connect();
+
+        log('Connected to Gecko Bootloader OTA service');
+        showStep('select-file');
+      } catch (error) {
+        log(`Error: ${error.message}`);
+        showStep('connect');
+      }
+    }
+
+    function fileInputChanged(event) {
+      log(`Selected file: ${event.target.files[0].name}`);
+      showStep('upload');
+    }
+
+    async function uploadButtonClicked() {
+      const fileInput = document.getElementById('file-input');
+      const buffer = await fileInput.files[0]?.arrayBuffer();
+      if (!buffer) {
+        log('No file selected or unable to read file.');
+        return;
+      }
+
+      try {
+        await client.flashFirmware(buffer, {
+          progress: (percent) => {
+            log(`Upload progress: ${percent.toFixed(2)}%`);
+          }
+        });
+
+        log('Firmware upload complete!');
+        showStep('reboot');
+      } catch (error) {
+        log(`Error during upload: ${error.message}`);
+        client.disconnect();
+        showStep('connect');
+      }
+    }
+
+    async function rebootButtonClicked() {
+      client.disconnect();
+
+      log('Device rebooting...');
+      showStep('connect');
+    }
+
+    document.getElementById('connect-button').addEventListener('click', connectButtonClicked);
+    document.getElementById('upload-button').addEventListener('click', uploadButtonClicked);
+    document.getElementById('file-input').addEventListener('change', fileInputChanged);
+    document.getElementById('reboot-button').addEventListener('click', rebootButtonClicked);
+  </script>
+</body>
+
+</html>
