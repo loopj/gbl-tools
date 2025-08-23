@@ -58,8 +58,17 @@ console.log(`Application version: ${appVersion}`);
 
 ### CLI
 
+You can run the GBL parser from the command line without installing the package by using `npx`:
+
 ```bash
-npx gbl-tools somefile.gbl
+npx -p gbl-tools gbl-parser myfile.gbl
+```
+
+Alternatively, you can install the package globally:
+
+```bash
+npm install -g gbl-tools
+gbl-parser myfile.gbl
 ```
 
 ## Flashing firmware using the Gecko Bootloader BLE OTA protocol
