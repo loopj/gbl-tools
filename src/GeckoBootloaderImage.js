@@ -292,7 +292,7 @@ export class GeckoBootloaderImage {
    * @returns {boolean} True if the GBL image is valid, false otherwise.
    */
   isValid() {
-    return this.header.version === GBL_VERSION && this.crc32 === this.calculateCRC32();
+    return this.header?.version === GBL_VERSION && this.crc32 === this.calculateCRC32();
   }
 
   #parseHeaderTag(offset, length) {
