@@ -17,6 +17,13 @@ function bytesToHex(bytes, truncateAt = 64) {
   return truncateAt && hex.length > truncateAt ? `${hex.slice(0, truncateAt)}...` : hex;
 }
 
+function bytesToUUIDString(bytes) {
+  if (bytes.length !== 16) throw new Error('Invalid byte length');
+
+  const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+  return [hex.slice(0, 8), hex.slice(8, 12), hex.slice(12, 16), hex.slice(16, 20), hex.slice(20)].join('-');
+}
+
 function flagString(flags, source) {
   return (
     Object.keys(source)
@@ -72,7 +79,7 @@ if (image.application) {
   console.log(`  Type:                ${flagString(image.application.type, GBL_APPLICATION_TYPE)}`);
   console.log(`  Version:             0x${intToHex(image.application.version)}`);
   console.log(`  Capabilities:        0x${intToHex(image.application.capabilities)}`);
-  console.log(`  Product ID:          0x${bytesToHex(image.application.productId)}`);
+  console.log(`  Product ID:          ${bytesToUUIDString(image.application.productId)}`);
   console.log();
 }
 
