@@ -171,6 +171,9 @@ export class GeckoBootloaderClient {
 
     // Finish the OTA process
     await this.otaControl(GBL_OTA_COMMAND.FINISH_OTA);
+
+    // Always report 100% progress at the end
+    progress?.(100);
   }
 
   /**
